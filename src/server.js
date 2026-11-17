@@ -1,0 +1,14 @@
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import health from './routes/health.js';
+import products from './routes/products.js';
+import orders from './routes/orders.js';
+import payments from './routes/payments.js';
+const app=express();
+app.use(helmet()); app.use(cors({origin:process.env.CORS_ORIGIN?.split(',')||false})); app.use(express.json({limit:'200kb'}));
+app.get('/',(_req,res)=>res.json({name:'Quick Drop Delivery API',area:'Kitale, Kenya',version:'0.1.0'}));
+app.use('/api/health',health); app.use('/api/products',products); app.use('/api/orders',orders); app.use('/api/payments',payments);
+app.use((err,_req,res,_next)=>{console.error(err.message);res.status(500).json({error:'Unexpected server error.'});});
+const port=Number(process.env.PORT||4000); app.listen(port,()=>console.log(`Quick Drop API listening on port ${port}`));
