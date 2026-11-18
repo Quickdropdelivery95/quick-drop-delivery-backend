@@ -12,3 +12,7 @@ app.get('/',(_req,res)=>res.json({name:'Quick Drop Delivery API',area:'Kitale, K
 app.use('/api/health',health); app.use('/api/products',products); app.use('/api/orders',orders); app.use('/api/payments',payments);
 app.use((err,_req,res,_next)=>{console.error(err.message);res.status(500).json({error:'Unexpected server error.'});});
 const port=Number(process.env.PORT||4000); app.listen(port,()=>console.log(`Quick Drop API listening on port ${port}`));
+import register from './auth/register.js';
+import login from './auth/login.js';
+app.use('/api/auth', register);
+app.use('/api/auth', login);
