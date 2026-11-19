@@ -18,7 +18,9 @@ router.post('/login', async (req, res) => {
     }
 
     const result = await pool.query(
-      'SELECT id, name, phone, password FROM users WHERE phone = $1',
+      `SELECT id, full_name, phone, password_hash, role
+       FROM users
+       WHERE phone = $1`,
       [phone.trim()]
     );
 
@@ -33,7 +35,7 @@ router.post('/login', async (req, res) => {
 
     const validPassword = await bcrypt.compare(
       password,
-      user.password
+      user.password_hash
     );
 
     if (!validPassword) {
@@ -48,7 +50,7 @@ router.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, phone: user.phone },
+      { id: user.id, phone: user.phone, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -59,8 +61,9 @@ router.post('/login', async (req, res) => {
       token,
       user: {
         id: user.id,
-        name: user.name,
-        phone: user.phone
+        name: user.full_name,
+        phone: user.phone,
+        role: user.role
       }
     });
 
@@ -75,5 +78,3 @@ router.post('/login', async (req, res) => {
 });
 
 export default router;
-
-        
